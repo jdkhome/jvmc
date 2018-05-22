@@ -46,7 +46,7 @@ public class JvmcApplication implements CommandLineRunner {
 
         //112.90.89.15
         new Thread(() -> {
-            p2PNode.connect("localhost", 7769);
+            p2PNode.connect("112.90.89.15", 7769);
         }).start();
 
 

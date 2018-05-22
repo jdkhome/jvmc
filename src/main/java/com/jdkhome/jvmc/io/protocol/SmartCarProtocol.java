@@ -46,6 +46,11 @@ public class SmartCarProtocol {
         this.content = content;
     }
 
+    public SmartCarProtocol(String msg) {
+        new SmartCarProtocol(msg.getBytes().length,
+                msg.getBytes());
+    }
+
 
 
     public int getContentLength() {

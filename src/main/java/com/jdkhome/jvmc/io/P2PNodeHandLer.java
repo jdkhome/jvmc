@@ -1,11 +1,15 @@
 package com.jdkhome.jvmc.io;
 
+import com.alibaba.fastjson.JSONObject;
+import com.jdkhome.jvmc.comment.enums.ResponseError;
+import com.jdkhome.jvmc.io.msg.BaseMsg;
 import com.jdkhome.jvmc.io.protocol.SmartCarProtocol;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.socket.SocketChannel;
 import lombok.extern.java.Log;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -21,10 +25,9 @@ import java.util.concurrent.ConcurrentHashMap;
 @Log
 public class P2PNodeHandLer extends ChannelInboundHandlerAdapter {
 
-    /**
-     * 管理连接(握手的连接)
-     */
-    Map<SocketChannel, String> map = new ConcurrentHashMap<SocketChannel, String>();
+    @Autowired
+    NodeManager nodeManager;
+
 
     /**
      * 这里我们覆盖了chanelRead()事件处理方法。 每当从客户端收到新的数据时， 这个方法会在收到消息时被调用，
@@ -39,7 +42,7 @@ public class P2PNodeHandLer extends ChannelInboundHandlerAdapter {
         SmartCarProtocol body = (SmartCarProtocol) msg;
         log.info("收到消息 :" + body.toString());
 
-        map.put((SocketChannel) ctx.channel(),"111");
+        nodeManager.addNode("test", (SocketChannel) ctx.channel());
 
     }
 
@@ -47,10 +50,14 @@ public class P2PNodeHandLer extends ChannelInboundHandlerAdapter {
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
 
-        String str="请求握手！";
-        SmartCarProtocol response = new SmartCarProtocol(str.getBytes().length,
-                str.getBytes());
-        ctx.channel().writeAndFlush(response);
+        // 获取本机配置...
+        BaseMsg baseMsg = new BaseMsg(ResponseError.REQUEST_HAND);
+
+        String msg = JSONObject.toJSONString(baseMsg);
+
+        log.info("发送消息" + msg);
+
+        ctx.channel().writeAndFlush(new SmartCarProtocol(msg));
 
     }
 
@@ -70,15 +77,6 @@ public class P2PNodeHandLer extends ChannelInboundHandlerAdapter {
     @Override
     public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
         ctx.flush();
-    }
-
-    public void putMsgAll() {
-        map.keySet().stream().forEach(chanller -> {
-            String str="aaa";
-            SmartCarProtocol response = new SmartCarProtocol(str.getBytes().length,
-                    str.getBytes());
-            chanller.writeAndFlush(response);
-        });
     }
 
 
