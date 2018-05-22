@@ -51,7 +51,7 @@ public class SmartCarDecoder extends ByteToMessageDecoder {
             int length = buffer.readInt();
 
             // 判断请求数据包数据是否到齐
-            if (buffer.readableBytes() < length) {
+            if (buffer.readableBytes() <= length) {
                 //没到齐就重置指针
                 buffer.resetReaderIndex();
                 return;
