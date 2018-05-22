@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ConfigurableApplicationContext;
 
 @Log
 @SpringBootApplication
@@ -24,6 +25,9 @@ public class JvmcApplication implements CommandLineRunner {
         // Spring 容器启动后挂起线程
         Thread.currentThread().join();
     }
+
+
+    // https://blog.csdn.net/u012377333/article/details/51555207
 
     /**
      * Callback used to run the bean.
@@ -46,10 +50,12 @@ public class JvmcApplication implements CommandLineRunner {
 
         //112.90.89.15
         new Thread(() -> {
+            p2PNode.connect("localhost", 7769);
             p2PNode.connect("112.90.89.15", 7769);
         }).start();
-
-
+//        new Thread(() -> {
+//            p2PNode.connect("112.90.89.15", 7769);
+//        }).start();
 
 
     }

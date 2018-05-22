@@ -75,7 +75,7 @@ public class P2PNode {
                     ch.pipeline().addLast(new SmartCarEncoder());
                     ch.pipeline().addLast(new SmartCarDecoder());
                     // 注册handler
-                    ch.pipeline().addLast(new P2PNodeHandLer());
+                    ch.pipeline().addLast(p2PNodeHandLer);
                 }
             });
 

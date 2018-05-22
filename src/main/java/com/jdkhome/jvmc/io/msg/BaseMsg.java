@@ -1,6 +1,7 @@
 package com.jdkhome.jvmc.io.msg;
 
 import com.jdkhome.jvmc.comment.enums.ResponseError;
+import com.jdkhome.jvmc.comment.exception.ServiceException;
 
 /**
  * author link.ji
@@ -87,19 +88,13 @@ public class BaseMsg {
     /**
      * 返回指定错误类型的响应
      */
-    public static BaseMsg responseWithRespError(ResponseError responseError) {
-        BaseMsg response = new BaseMsg(SUCCESS_CODE);
-        response.code = responseError.getCode();
-        response.msg = responseError.getMsg();
+    public static BaseMsg responseWithServiceError(ServiceException se) {
+        BaseMsg response = new BaseMsg();
+        response.code = se.getErrorCode();
+        response.msg = se.getErrorMsg();
         response.data = null;
         return response;
     }
 
 
-    /**
-     * 未登录响应
-     */
-    public static BaseMsg unLoginResponse() {
-        return responseWithRespError(ResponseError.NO_LOGIN);
-    }
 }

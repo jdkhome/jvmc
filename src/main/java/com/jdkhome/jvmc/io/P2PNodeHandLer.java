@@ -2,15 +2,18 @@ package com.jdkhome.jvmc.io;
 
 import com.alibaba.fastjson.JSONObject;
 import com.jdkhome.jvmc.comment.enums.ResponseError;
+import com.jdkhome.jvmc.comment.exception.ServiceException;
 import com.jdkhome.jvmc.io.msg.BaseMsg;
 import com.jdkhome.jvmc.io.protocol.SmartCarProtocol;
 import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.socket.SocketChannel;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -22,6 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * 然后你可以覆盖这些方法。 现在仅仅只需要继承ChannelHandlerAdapter类而不是你自己去实现接口方法。
  */
 @Component
+@ChannelHandler.Sharable
 @Log
 public class P2PNodeHandLer extends ChannelInboundHandlerAdapter {
 
@@ -42,7 +46,12 @@ public class P2PNodeHandLer extends ChannelInboundHandlerAdapter {
         SmartCarProtocol body = (SmartCarProtocol) msg;
         log.info("收到消息 :" + body.toString());
 
-        nodeManager.addNode("test", (SocketChannel) ctx.channel());
+        try {
+            // 消息处理器
+            //nodeManager.addNode("test", (SocketChannel) ctx.channel());
+        } catch (ServiceException se) {
+            ctx.channel().writeAndFlush(new SmartCarProtocol(JSONObject.toJSONString(BaseMsg.responseWithServiceError(se))));
+        }
 
     }
 
@@ -58,6 +67,7 @@ public class P2PNodeHandLer extends ChannelInboundHandlerAdapter {
         log.info("发送消息" + msg);
 
         ctx.channel().writeAndFlush(new SmartCarProtocol(msg));
+
 
     }
 

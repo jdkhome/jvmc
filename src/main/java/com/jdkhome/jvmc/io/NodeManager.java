@@ -7,6 +7,7 @@ import io.netty.channel.socket.SocketChannel;
 import lombok.extern.java.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -28,7 +29,7 @@ public class NodeManager {
     /**
      * 管理连接(握手的连接)
      */
-    Map<String, SocketChannel> nodes = new HashMap<>();
+    Map<String, SocketChannel> nodes = new ConcurrentHashMap<>();
 
     /**
      * 添加一个节点
@@ -37,6 +38,9 @@ public class NodeManager {
      * @param channel
      */
     public void addNode(String nickName, SocketChannel channel) {
+
+        logger.info("1111111");
+
         if (nodes.containsKey(nickName)) {
             logger.info("已存在node: nickname={}", nickName);
             throw new ServiceException(ResponseError.ALREADY_CONNECT);
