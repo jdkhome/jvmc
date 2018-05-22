@@ -35,6 +35,7 @@ public class SmartCarDecoder extends ByteToMessageDecoder {
         // 可读长度必须大于基本长度
         if (buffer.readableBytes() >= SmartCarDecoder.BASE_LENGTH) {
 
+
             //标记包头开始
             buffer.markReaderIndex();
 
@@ -48,19 +49,25 @@ public class SmartCarDecoder extends ByteToMessageDecoder {
             int beginReader = 4;
 
             // 首先读消息的长度
-            int length = buffer.readInt();
-
-            // 判断请求数据包数据是否到齐
-            if (buffer.readableBytes() <= length) {
+            int length = 0;
+            if (buffer.readableBytes() < SmartCarDecoder.BASE_LENGTH) {
                 //没到齐就重置指针
                 buffer.resetReaderIndex();
                 return;
             }
+            length = buffer.readInt();
 
+
+
+            // 判断请求数据包数据是否到齐
+            if (buffer.readableBytes() < length + 4) {
+                //没到齐就重置指针
+                buffer.resetReaderIndex();
+                return;
+            }
             //读这个消息
             byte[] data = new byte[length];
             buffer.readBytes(data);
-
             // 接着再读一个4字节标志位
             int end_flag = buffer.readInt();
 
