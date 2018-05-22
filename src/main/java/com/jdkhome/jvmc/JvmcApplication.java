@@ -49,9 +49,7 @@ public class JvmcApplication implements CommandLineRunner {
             p2PNode.connect("localhost", 7769);
         }).start();
 
-        while (true){
-            p2PNodeHandLer.putMsgAll();
-        }
+
 
 
     }
